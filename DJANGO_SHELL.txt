@@ -1,0 +1,9 @@
+from world.models import Density_Map
+from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
+
+test_row = Density_Map(start_date = '1999-12-1 00:00:00',  end_date = '2000-12-1 00:00:00', poly_coordinate = Polygon( ((0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0), (0.0, 0.0)) ) ,density = 0.0023)
+
+from django.core.serializers import serialize
+
+serialize('geojson', Density_Map.objects.all(), geometry_field='polygon', fields=('density','start_date','end_date', 'poly_coordinate'))
+

@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+django = "*"
+django-extensions = "*"
+django-rest-knox = "*"
+djangorestframework = "*"
+psycopg2 = "*"
+csv = "*"
+
+[requires]
+python_version = "3.7"

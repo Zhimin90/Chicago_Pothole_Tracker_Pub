@@ -34,5 +34,5 @@ class T_Potholes(models.Model):
 class Density_Map(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    poly_coordinate =  models.PolygonField(null=True, blank=True)
+    poly_coordinate =  models.GeometryField(null=True, blank=True)
     density = models.DecimalField(null=True, blank=True, max_digits=40, decimal_places=20)

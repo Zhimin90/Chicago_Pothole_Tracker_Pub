@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development --watch ./geodjango/frontend/src/index.js --output ./geodjango/frontend/static/frontend/main.js",
-    "build": "webpack --mode production ./geodjango/frontend/src/index.js --output ./geodjango/frontend/static/frontend/main.js"
+    "dev": "webpack --mode development --watch  ./geodjango/frontend/src/index.js --output ./geodjango/frontend/static/frontend/main.js",
+    "build": "webpack --mode production ./geodjango/frontend/src/index.js --output ./geodjango/frontend/static/frontend/main.js",
+    "start": "webpack-dev-server --open "
   },
   "keywords": [],
   "author": "",
@@ -16,8 +17,9 @@
     "@babel/preset-react": "^7.7.4",
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "webpack": "^4.41.4",
-    "webpack-cli": "^3.3.10"
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
   },
   "dependencies": {
     "axios": "^0.19.0",

@@ -50,9 +50,9 @@ class Mapbox extends React.Component {
     }
 
     let getBounds = debounce(() => {
-      //getData();
+      getData();
       //console.log("The bound is: ", map.getBounds());
-    }, 1);
+    }, 500);
 
     map.on("move", () => {
       const { lng, lat } = map.getCenter();
@@ -78,7 +78,7 @@ class Mapbox extends React.Component {
         .then(({ data }) => {
           this.setState({ data: data });
 
-          //console.log(data);
+          console.log(data);
 
           map.addSource("chicago_bound", {
             type: "geojson",

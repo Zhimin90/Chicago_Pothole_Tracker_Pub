@@ -1,0 +1,14 @@
+import json
+from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
+
+filename = 'C:\\Users\\Zhimin90\\Documents\\CPT\\Geopandas\\2017-11-11_4_test.geojson'
+f = open(filename, 'r')
+geo_dict = json.load(f)
+
+geo_dict['features'][14]['geometry']
+
+Mulitply = GEOSGeometry(str(geo_dict['features'][14]['geometry']))
+
+Polygon = GEOSGeometry(str(geo_dict['features'][0]['geometry']))
+
+Density_Map(start_date = '2011-11-11 00:00:00', end_date = '2011-11-12 00:00:00', poly_coordinate = Mulitply, density = 20)

@@ -11,4 +11,4 @@ Mulitply = GEOSGeometry(str(geo_dict['features'][14]['geometry']))
 
 Polygon = GEOSGeometry(str(geo_dict['features'][0]['geometry']))
 
-Density_Map(start_date = '2011-11-11 00:00:00', end_date = '2011-11-12 00:00:00', poly_coordinate = Mulitply, density = 20)
+row = Density_Map(start_date = '2011-11-11 00:00:00', end_date = '2011-11-12 00:00:00', poly_coordinate = Mulitply, density = 20)

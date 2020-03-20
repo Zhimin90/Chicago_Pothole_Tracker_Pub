@@ -100,7 +100,8 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'geodjango',
         'USER': 'postgres',
-        'PASSWORD' : CRMEASY_DB_PASS
+        'PASSWORD' : CRMEASY_DB_PASS,
+        'HOST': 'localhost'
     }
 }
 

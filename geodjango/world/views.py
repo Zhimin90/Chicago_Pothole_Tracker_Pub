@@ -7,7 +7,7 @@ from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
 from datetime import datetime
 import ast
 import tensorflow as tf
-#import geopandas as gpd
+import geopandas as gpd
 #from tensorflow.keras.models import Sequential
 
 # Create your views here.

@@ -11,7 +11,8 @@ django-extensions = "*"
 django-rest-knox = "*"
 djangorestframework = "*"
 psycopg2 = "*"
-csv = "*"
+tensorflow = "*"
+geopandas = "*"
 
 [requires]
 python_version = "3.7"

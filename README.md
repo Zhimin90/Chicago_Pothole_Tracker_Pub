@@ -4,10 +4,12 @@
 
 ### React.jg frontend with MAPBOX GL
 
-### Geodjango logic dataframe dissolve
+### Geopandas logic dataframe dissolve
 
 ### Keras TensorFlow LSTM prediction
 
+#### ->Pothole Density 10 Day Ahead Forecast<-
 ![pothole zones](gifs/potholes_zone.gif)
 
+#### ->Pothole Location from 2011-2018 aggreggated from 311 calls<-
 ![pothole locations](gifs/potholes.gif)

@@ -8,8 +8,10 @@
 
 ### Keras TensorFlow LSTM prediction
 
-<p style="text-align: center;">Pothole Density 10 Day Ahead Forecast</p>
+
+Pothole Density 10 Day Ahead Forecast
 ![pothole zones](gifs/potholes_zone.gif)
 
-<p style="text-align: center;">Pothole Location from 2011-2018 aggreggated from 311 calls</p>
+
+Pothole Location from 2011-2018 aggreggated from 311 calls
 ![pothole locations](gifs/potholes.gif)

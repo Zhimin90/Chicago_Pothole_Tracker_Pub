@@ -16,7 +16,7 @@ from shapely.geometry import Polygon
 CSV_PATH = "/home/zhimin90/CPT/CSVs/"
 
 def run():
-    Density_Map.objects.all().delete()
+    
 
     client = Socrata("data.cityofchicago.org", None)
     results = client.get("wqdh-9gek",order="request_date DESC", limit=100000)
@@ -220,4 +220,5 @@ def run():
         insert_row = Density_Map(start_date = start_d, end_date = end_d, poly_coordinate = geometry, density = density)
         insert_row.save()
     
+    Density_Map.objects.all().delete()
     gdf_dissolved.apply(lambda row: applyInsert(row.geometry, row.start_date, row.end_date, row.density), axis=1)

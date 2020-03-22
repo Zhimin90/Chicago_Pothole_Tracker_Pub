@@ -13,6 +13,10 @@ djangorestframework = "*"
 psycopg2 = "*"
 tensorflow = "*"
 geopandas = "*"
+sodapy = "*"
+dill = "*"
+sklearn = "*"
+kdepy = "*"
 
 [requires]
 python_version = "3.7"

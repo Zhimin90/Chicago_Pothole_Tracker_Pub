@@ -52,7 +52,7 @@ class Mapbox extends React.Component {
     let getBounds = debounce(() => {
       getData();
       //console.log("The bound is: ", map.getBounds());
-    }, 500);
+    }, 1000);
 
     map.on("move", () => {
       const { lng, lat } = map.getCenter();
@@ -67,6 +67,7 @@ class Mapbox extends React.Component {
     });
 
     map.on("load", () => {
+      console.log("map loaded")
       //console.log(this);
       //getData();
       axios

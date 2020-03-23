@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'world',
     'frontend',
-    'django_extensions'
+    'django_extensions',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,11 @@ STATIC_URL = '/static/'
 SERIALIZATION_MODULES = {
     "geojson": "django.contrib.gis.serializers.geojson", 
  }
+
+CRONJOBS = [
+    ('*/1 * * * *', 'world.cron.my_scheduled_job', '>> ~/CPT/Chicago_Pothole_Tracker_Pub/geodjango/out.log'),
+    ('0 * * * *', 'world.load_data_frame.run', '>> ~/CPT/Chicago_Pothole_Tracker_Pub/geodjango/load_data_frame_out.log')
+]
+
+CRONTAB_COMMAND_SUFFIX = '2>&1'
+CRONTAB_COMMAND_PREFIX = "source ~/.env &&"

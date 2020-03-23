@@ -17,6 +17,7 @@ sodapy = "*"
 dill = "*"
 sklearn = "*"
 kdepy = "*"
+django-crontab = "*"
 
 [requires]
 python_version = "3.7"

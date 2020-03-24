@@ -1,1 +1,1 @@
-web: gunicorn geodjango.wsgi --log-file=-
+web: gunicorn geodjango.geodjango.wsgi:application  --log-file=-

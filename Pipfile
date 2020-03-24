@@ -22,6 +22,7 @@ gunicorn = "*"
 dj-database-url = "*"
 python-dotenv = "*"
 setuptools = "*"
+whitenoise = "*"
 
 [requires]
 python_version = "3.7"

@@ -112,7 +112,7 @@ def run():
     positions = positions.reshape(positions.shape[1], positions.shape[2])
     grid_matrix = positions
 
-    for i, df in enumerate(map_arr):
+    for i, df in enumerate(map_arr[-5:]):
         if df["LONGITUDE"].count() > 400:
             #grid, points = get_kde(df["LONGITUDE"].dropna().to_numpy(), df["LATITUDE"].dropna().to_numpy() , xmin, xmax, ymin, ymax, xx, yy, positions)
             points = get_kde(df["LONGITUDE"].dropna().to_numpy(), df["LATITUDE"].dropna().to_numpy() , xmin, xmax, ymin, ymax, xx, yy, positions)

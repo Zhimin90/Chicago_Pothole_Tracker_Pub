@@ -54,9 +54,6 @@ if ENV_ROLE == 'development':
 
 CRMEASY_DB_PASS = os.environ.get('CRMEASY_DB_PASS')
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [

@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from world.models import Density_Map
 from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
@@ -13,10 +14,9 @@ import tensorflow.keras as keras
 import geopandas as gpd
 from shapely.geometry import Polygon
 
-CSV_PATH = "/home/zhimin90/CPT/CSVs/"
+CSV_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/'
 
 def run():
-    
 
     client = Socrata("data.cityofchicago.org", None)
     results = client.get("wqdh-9gek",order="request_date DESC", limit=100000)
@@ -137,7 +137,10 @@ def run():
     x_test2 = np.reshape(x_test, (x_test.shape[0], 1, x_test.shape[1]))
     y_test2 = y_test 
 
-    model = keras.models.load_model(CSV_PATH + 'TensorFlowModel_2020_train_save')
+    with open(CSV_PATH + 'TensorFlowModel_2020_train_save_model_config.json') as json_file:
+        json_config = json_file.read()
+    model = keras.models.model_from_json(json_config)
+    model.load_weights(CSV_PATH + 'TensorFlowModel_2020_train_save_my_weights.h5')
 
     def predictor(model, data_in, grid, start_frame_date, end_frame_date, time_shift):
         xx, yy = grid

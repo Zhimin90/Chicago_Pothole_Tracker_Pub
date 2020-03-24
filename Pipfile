@@ -18,6 +18,10 @@ dill = "*"
 sklearn = "*"
 kdepy = "*"
 django-crontab = "*"
+gunicorn = "*"
+dj-database-url = "*"
+python-dotenv = "*"
+setuptools = "*"
 
 [requires]
 python_version = "3.7"

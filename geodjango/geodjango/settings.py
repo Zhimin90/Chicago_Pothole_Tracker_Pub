@@ -11,11 +11,18 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import dj_database_url
+from os.path import join, dirname
+from dotenv import load_dotenv
+dotenv_path = join(dirname(__file__), '../.env')
+
+print(dotenv_path)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if os.name == 'nt':
+    print("test "*25)
     import platform
     OSGEO4W = r"C:\OSGeo4W"
     if '64' in platform.architecture()[0]:
@@ -25,6 +32,9 @@ if os.name == 'nt':
     os.environ['GDAL_DATA'] = OSGEO4W + r"\share\gdal"
     os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
     os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+
+GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
+GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -40,8 +50,8 @@ CRMEASY_DB_PASS = False
 if ENV_ROLE == 'development':
     DEBUG = True
     TEMPLATE_DEBUG = DEBUG
-    CRMEASY_DB_PASS = os.environ.get('CRMEASY_DB_PASS')
 
+CRMEASY_DB_PASS = os.environ.get('CRMEASY_DB_PASS')
 
 ALLOWED_HOSTS = []
 
@@ -102,10 +112,14 @@ DATABASES = {
         'NAME': 'geodjango',
         'USER': 'postgres',
         'PASSWORD' : CRMEASY_DB_PASS,
-        'HOST': 'localhost'
+        'HOST': 'localhost',
+        'PORT': 5432
     }
 }
 
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

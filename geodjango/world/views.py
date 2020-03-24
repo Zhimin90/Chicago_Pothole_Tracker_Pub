@@ -23,6 +23,7 @@ def get_density_map(request):
     #bound = Polygon.from_bbox((-87.65797272125538,  41.95381335885449, -87.63888550483443, 41.97115012250981))
     query = Density_Map.objects.filter(poly_coordinate__bboverlaps = bound).filter(end_date__date__gte = datetime(2018, 11, 10))
     #query = Density_Map.objects.filter(end_date__date__gte = datetime(2018, 11, 10), )
+    #print(query)
     print("Serializing")
     geojson = serialize('geojson', query, geometry_field='poly_coordinate', fields=('density','start_date','end_date'))
     print("Done Serializing")

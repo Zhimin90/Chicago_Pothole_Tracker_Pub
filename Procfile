@@ -1,1 +1,1 @@
-web: gunicorn herokugisproject.wsgi --log-file=-
+web: gunicorn chicago-pothole-forecast.wsgi --log-file=-

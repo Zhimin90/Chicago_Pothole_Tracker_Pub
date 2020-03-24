@@ -1,1 +1,1 @@
-web: gunicorn chicago-pothole-forecast.wsgi --log-file=-
+web: gunicorn geodjango.wsgi --log-file=-

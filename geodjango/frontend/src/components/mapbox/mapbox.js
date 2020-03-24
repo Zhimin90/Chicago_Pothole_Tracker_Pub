@@ -39,7 +39,7 @@ class Mapbox extends React.Component {
 
     function getData() {
       axios
-        .get("http://127.0.0.1:8000/api/geojson_density_map", {
+        .get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
           params: {
             Bounds: map.getBounds()
           }
@@ -71,7 +71,7 @@ class Mapbox extends React.Component {
       //console.log(this);
       //getData();
       axios
-        .get("http://127.0.0.1:8000/api/geojson_density_map", {
+        .get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
           params: {
             Bounds: map.getBounds()
           }

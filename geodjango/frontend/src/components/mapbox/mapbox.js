@@ -2,10 +2,6 @@ import React from "react";
 import mapboxgl from "mapbox-gl";
 import axios from "../axios/axios";
 import { debounce } from "lodash";
-//import myData from "./Boundaries - City.json";
-//import myDataTest from "./2017-11-11_4_test.json";
-//import Logger from "simple-console-logger";
-//Logger.configure({ level: "debug" });
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA";
@@ -31,7 +27,7 @@ class Mapbox extends React.Component {
 
     const map = new mapboxgl.Map({
       container: this.mapContainer,
-      style: "mapbox://styles/mapbox/streets-v9",
+      style: "mapbox://styles/mapbox/streets-v11",
       center: [lng, lat],
       zoom,
       maxBounds: "" // Sets bounds as max
@@ -39,7 +35,7 @@ class Mapbox extends React.Component {
 
     function getData() {
       axios
-        .get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
+        .get("/api/geojson_density_map", {
           params: {
             Bounds: map.getBounds()
           }
@@ -71,7 +67,7 @@ class Mapbox extends React.Component {
       //console.log(this);
       //getData();
       axios
-        .get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
+        .get("/api/geojson_density_map", {
           params: {
             Bounds: map.getBounds()
           }
@@ -114,6 +110,15 @@ class Mapbox extends React.Component {
           });
         });
     });
+
+    // Add geolocate control to the map.
+    map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true
+      }));
   }
 
   render() {

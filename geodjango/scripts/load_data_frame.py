@@ -187,7 +187,9 @@ def run():
     dataframe = predictor(model,np.reshape(Last_time_frame,(Last_time_frame.shape[0],1,Last_time_frame.shape[1])), (xx, yy), start_frame_date, end_frame_date, time_shift)
 
     df = dataframe
-    df["int_density"] = df.density.astype(int)
+    max_density = max(df.density.astype(int))
+    min_density = min(df.density.astype(int))
+    df["int_density"] = (df.density.astype(int)*50/(max_density - min_density)).astype(int)
 
     list = []
     for index, row in df.iterrows():

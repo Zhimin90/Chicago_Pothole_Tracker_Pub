@@ -189,7 +189,7 @@ def run():
     df = dataframe
     max_density = max(df.density.astype(int))
     min_density = min(df.density.astype(int))
-    df["int_density"] = (df.density.astype(int)*50/(max_density - min_density)).astype(int)
+    df["int_density"] = (df.density.astype(int)*25/(max_density - min_density)).astype(int)
 
     list = []
     for index, row in df.iterrows():

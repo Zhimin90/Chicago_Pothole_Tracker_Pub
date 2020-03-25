@@ -218,7 +218,8 @@ def run():
             print("-"*25)
 
     gdf_dissolved = gdf.dissolve(by=['int_density','zone'])
-
+    gdf_dissolved['geometry'] = gdf_dissolved['geometry'].simplify(0)
+    
     f = open(CSV_PATH +'gdf_dissolved_2020.pkl', "wb")
     dill.dump(gdf_dissolved, file=f)
     f.close()

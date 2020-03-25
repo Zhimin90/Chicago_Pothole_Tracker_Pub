@@ -218,6 +218,7 @@ def run():
             print("-"*25)
 
     gdf_dissolved = gdf.dissolve(by=['int_density','zone'])
+    gdf_dissolved['geometry'] = gdf_dissolved['geometry'].simplify(0)
 
     def applyInsert(geometry,start_d,end_d,density):
         geometry = GEOSGeometry(str(geometry))

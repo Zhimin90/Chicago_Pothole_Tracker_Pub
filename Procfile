@@ -1,2 +1,2 @@
 web: gunicorn --pythonpath geodjango geodjango.wsgi:application  --log-file=-
-clock: python --pythonpath geodjango world load_data_frame.py
+clock: python ~/geodjango/geodjango/world/load_data_frame.py

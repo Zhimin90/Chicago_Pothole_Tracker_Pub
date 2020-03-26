@@ -24,6 +24,7 @@ python-dotenv = "*"
 setuptools = "*"
 whitenoise = "*"
 rasterio = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "3.7"

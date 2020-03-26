@@ -1,3 +1,4 @@
+from apscheduler.schedulers.blocking import BlockingScheduler
 import os
 from world.models import Density_Map
 from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
@@ -185,3 +186,16 @@ def run():
     
     Density_Map.objects.all().delete()
     gpd_polygonized_raster.apply(lambda row: applyInsert(row.geometry, row.start_date, row.end_date, row.density), axis=1)
+
+
+sched = BlockingScheduler()
+@sched.scheduled_job('interval', minutes=1)
+def timed_job():
+    print('This job is run every single minute.')
+
+@sched.scheduled_job('cron', day_of_week='mon-fri', hour=24)
+def scheduled_job():
+    run()
+    print('This job is run every weekday at midnight 12am.')
+
+sched.start()

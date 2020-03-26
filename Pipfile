@@ -23,6 +23,7 @@ dj-database-url = "*"
 python-dotenv = "*"
 setuptools = "*"
 whitenoise = "*"
+rasterio = "*"
 
 [requires]
 python_version = "3.7"

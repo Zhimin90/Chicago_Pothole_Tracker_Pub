@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 from world.models import Density_Map
 from django.contrib.gis.geos import GEOSGeometry, Point, Polygon
 from datetime import timedelta, date
@@ -10,16 +9,20 @@ from sodapy import Socrata
 import dill
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from KDEpy import FFTKDE, NaiveKDE
-import tensorflow.keras as keras
-import geopandas as gpd
+import rasterio
+from rasterio.transform import Affine
+from shapely.geometry import shape
 from shapely.geometry import Polygon
+from rasterio import features
+import geopandas as gp
+import dill
 
 CSV_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/'
 
 def run():
-
+    previous_30days_date = (pd.datetime.now()- timedelta(days=30)).strftime('%Y-%m-%d')
     client = Socrata("data.cityofchicago.org", None)
-    results = client.get("wqdh-9gek",order="request_date DESC", limit=100000)
+    results = client.get("wqdh-9gek",order="request_date DESC",where="request_date > \"" + str(previous_30days_date)+"\"", limit=100000)
 
     # Convert to pandas DataFrame
     results_df = pd.DataFrame.from_records(results)
@@ -33,7 +36,6 @@ def run():
     test_df['LATITUDE'] = pd.to_numeric(test_df['LATITUDE'])
     test_df['LONGITUDE'] = pd.to_numeric(test_df['LONGITUDE'])
     df = test_df
-
     map_arr = []
     interval_int = 30 #use 30 days data to predict next 7 days
     series_range = 7 #days
@@ -42,7 +44,6 @@ def run():
     date_end = max(df['REQUEST_DATE'])
 
     geo_price_map = df[['REQUEST_DATE', 'COMPLETION_DATE','LATITUDE', 'LONGITUDE']]
-
     filter1a = pd.to_numeric(geo_price_map["LONGITUDE"]) > xbound[0]
     filter1b = pd.to_numeric(geo_price_map["LONGITUDE"]) < xbound[1]
     filter1c = pd.to_numeric(geo_price_map["LATITUDE"]) > ybound[0]
@@ -50,8 +51,7 @@ def run():
     print("sum of remaining is: " + str(sum(filter1a&filter1b&filter1c&filter1d)))
     geo_price_map = geo_price_map[filter1a&filter1b&filter1c&filter1d]
 
-
-    for int_cur_date in range(0, (date_end - date_start).days - interval_int, int(series_range)):
+    for int_cur_date in range(0, 7, int(series_range)):
         geo_price_map_filtered = geo_price_map[geo_price_map['LONGITUDE'].notnull()]
         
         filter2 = geo_price_map_filtered['REQUEST_DATE'] > (date_end - timedelta(days=int_cur_date+interval_int))
@@ -119,10 +119,7 @@ def run():
             density_matrix_t_series.append(points)
             print("@" + str(i))
 
-
     s = round(len(density_matrix_t_series)*0)
-
-
     f_in = open(CSV_PATH +'Scalers_2020.pkl', "rb")
     scaler,scaler2 = dill.load(f_in)
     f_in.close()
@@ -131,94 +128,54 @@ def run():
     flattened_matrix_np = np.reshape(dm_series_np, (dm_series_np.shape[0]*dm_series_np.shape[1], dm_series_np.shape[2]))
 
     normalized_matrices_test = scaler2.transform(scaler.transform(flattened_matrix_np))
-    x_test = normalized_matrices_test[0:-normalized_matrices_test.shape[1]].copy()
-    y_test = normalized_matrices_test[normalized_matrices_test.shape[1]-1:-1].copy()
+    y_test2 = normalized_matrices_test
 
-    x_test2 = np.reshape(x_test, (x_test.shape[0], 1, x_test.shape[1]))
-    y_test2 = y_test 
-
+    import tensorflow.keras as keras
     with open(CSV_PATH + 'TensorFlowModel_2020_train_save_model_config.json') as json_file:
-        json_config = json_file.read()
+            json_config = json_file.read()
     model = keras.models.model_from_json(json_config)
     model.load_weights(CSV_PATH + 'TensorFlowModel_2020_train_save_my_weights.h5')
 
-    def predictor(model, data_in, grid, start_frame_date, end_frame_date, time_shift):
-        xx, yy = grid
-        offset = yy.shape[0]
-        print("offset = yy.shape[0]" + str(offset))
-        xx = xx.ravel()
-        yy = yy.ravel()
-        xdelta = abs(xx[1] - xx[1+offset])
-        ydelta = abs(yy[0] - yy[1+offset])
-        print("xdelta"+str(xdelta))
-        print("ydelta"+str(ydelta))
-        columns = [ 'start_date', 'end_date', 'poly_coordinate', 'density']
-        
-        pred = model.predict(data_in)
-        data = scaler.inverse_transform(scaler2.inverse_transform(pred))
-        data_reshaped = data.reshape((int(data.shape[0]/data.shape[1]), data.shape[1], data.shape[1]))
-        print(data_reshaped.shape)
-        #each cell is a density estimate from KDE that that has been aggregated by number of potholes over time
-        #This time interval of density cell is input frame time + timeshift the target frame in the model that has shifted forward by
-        
-        row_dict = {'start_date' : None, 'end_date' : None, 'poly_coordinate': None, 'density': 0}
-        #append = pd.DataFrame(columns=columns)
-        dict_list = []
-        for t, matrix in enumerate(data_reshaped):
-            xy_matrix = np.flip(np.rot90(matrix),0)
-            print(xy_matrix.shape)
-            row_dict['start_date'] = pd.to_datetime(start_frame_date) + timedelta(days=(time_shift*(t+1)))
-            row_dict['end_date'] = pd.to_datetime(end_frame_date) + timedelta(days=(time_shift*(t+1)))
-            
-            for i, row in enumerate(xy_matrix):
-                for j, cell in enumerate(row):
-                    pos_index = i + j*xy_matrix.shape[1]
-                    #generate density cell (square) polycoordinate [[cxmin,cymin],[cxmax, cymin],[cxmin, cymax],[cxmax, cymax]]
-                    row_dict['poly_coordinate'] = [[xx[pos_index],yy[pos_index]],[xx[pos_index]+xdelta,yy[pos_index]],[xx[pos_index]+xdelta,yy[pos_index]+ydelta], [xx[pos_index],yy[pos_index]+ydelta]]
-                    row_dict['density'] = cell
-                    dict_list.append(row_dict.copy())
-
-        return pd.DataFrame(dict_list)
-
-    Last_time_frame = y_test2[-(y_test2.shape[1]+1):-1]
+    Last_time_frame = y_test2
+    pred = model.predict(np.reshape(Last_time_frame,(Last_time_frame.shape[0],1,Last_time_frame.shape[1])))
+    data = scaler.inverse_transform(scaler2.inverse_transform(pred))
+    data_reshaped = data.reshape((int(data.shape[0]/data.shape[1]), data.shape[1], data.shape[1]))
+    print(data_reshaped.shape)
     start_frame_date = min(map_arr[-1]['REQUEST_DATE'][map_arr[-1]['REQUEST_DATE'].notna()])
     end_frame_date = max(map_arr[-1]['REQUEST_DATE'][map_arr[-1]['REQUEST_DATE'].notna()])
     time_shift = 7 #days
-    dataframe = predictor(model,np.reshape(Last_time_frame,(Last_time_frame.shape[0],1,Last_time_frame.shape[1])), (xx, yy), start_frame_date, end_frame_date, time_shift)
 
-    df = dataframe
-    max_density = max(df.density.astype(int))
-    min_density = min(df.density.astype(int))
-    df["int_density"] = (df.density.astype(int)*25/(max_density - min_density)).astype(int)
+    offset = yy.shape[0]
+    print("offset = yy.shape[0]" + str(offset))
+    xx = xx.ravel()
+    yy = yy.ravel()
+    xdelta = abs(xx[1] - xx[1+offset])
+    ydelta = abs(yy[0] - yy[1+offset])
+    print("xdelta"+str(xdelta))
+    print("ydelta"+str(ydelta))
+    columns = [ 'start_date', 'end_date', 'poly_coordinate', 'density']
 
-    list = []
-    for index, row in df.iterrows():
-        list.append( [row['start_date'],  row['end_date'],Polygon( row['poly_coordinate']), row['density'], row['int_density']] )
+    Matrix = np.rot90(np.flip(data_reshaped[0],1))
+    max_density = np.max(Matrix)
+    min_density = np.min(Matrix)
+    Matrix = ((Matrix-min_density).astype(int)*25/(max_density - min_density)).astype('int32')
+    Z = Matrix*10
+    transform = rasterio.transform.from_bounds(min(xx), max(yy), max(xx), min(yy), Z.shape[1], Z.shape[0])
 
-    gdf = gpd.GeoDataFrame(list, columns =['start_date','end_date', 'geometry', 'density', 'int_density'])
-    xmin, ymin, xmax, ymax = gdf.total_bounds
+    results = ({'properties': {'raster_val': v}, 'geometry': s,'start_date':pd.to_datetime(start_frame_date) + timedelta(days=(time_shift*(1))),'end_date':pd.to_datetime(end_frame_date) + timedelta(days=(time_shift*(1)))}
+            for i, (s, v)
+            in enumerate(rasterio.features.shapes(Z,transform=transform)))
 
-    grid_size = 10
-    xgrid = np.arange(xmin, xmax, (xmax-xmin)/grid_size)
-    ygrid = np.arange(ymin, ymax, (ymax-ymin)/grid_size)
-    print(xgrid,ygrid)
+    geoms = list(results)
+    gpd_polygonized_raster  = gp.GeoDataFrame.from_features(geoms)
+    gpd_polygonized_raster["geometry"] = gpd_polygonized_raster["geometry"].simplify(0)
+    gpd_polygonized_raster['start_date'] = pd.to_datetime(start_frame_date) + timedelta(days=(time_shift*(1)))
+    gpd_polygonized_raster['end_date'] = pd.to_datetime(end_frame_date) + timedelta(days=(time_shift*(1)))
+    gpd_polygonized_raster.rename(columns={'raster_val': 'density'}, inplace=True)
 
-    c = 0
-    gdf["zone"] = None
-    for row in xgrid:
-        for col in ygrid:
-            boundbox = Polygon([[row,col],[row+(xmax-xmin)/grid_size,col],[row+(xmax-xmin)/grid_size,col+(ymax-ymin)/grid_size],[row,col+(ymax-ymin)/grid_size],[row,col]])
-            bb_df = gpd.GeoSeries(boundbox)
-            bool_within_bb = gdf.geometry.intersects(boundbox)
-            index_within_bb = gdf[bool_within_bb].index
-            gdf.iloc[index_within_bb,5] = c
-            c+=1
-            print(c)
-            print("count rows within count: " + str(len(index_within_bb)))
-            print("-"*25)
-
-    gdf_dissolved = gdf.dissolve(by=['int_density','zone'])
-    gdf_dissolved['geometry'] = gdf_dissolved['geometry'].simplify(0)
+    f = open(CSV_PATH +'gdf_dissolved_2020.pkl', "wb")
+    dill.dump(gpd_polygonized_raster, file=f)
+    f.close()
 
     def applyInsert(geometry,start_d,end_d,density):
         geometry = GEOSGeometry(str(geometry))
@@ -227,4 +184,4 @@ def run():
         insert_row.save()
     
     Density_Map.objects.all().delete()
-    gdf_dissolved.apply(lambda row: applyInsert(row.geometry, row.start_date, row.end_date, row.density), axis=1)
+    gpd_polygonized_raster.apply(lambda row: applyInsert(row.geometry, row.start_date, row.end_date, row.density), axis=1)

@@ -158,8 +158,8 @@ def run():
     Matrix = np.rot90(np.flip(data_reshaped[0],1))
     max_density = np.max(Matrix)
     min_density = np.min(Matrix)
-    Matrix = ((Matrix-min_density).astype(int)*25/(max_density - min_density)).astype('int32')
-    Z = Matrix*10
+    Matrix = ((Matrix-min_density).astype(int)*10/(max_density - min_density)).astype('int32')
+    Z = Matrix*25
     transform = rasterio.transform.from_bounds(min(xx), max(yy), max(xx), min(yy), Z.shape[1], Z.shape[0])
 
     results = ({'properties': {'raster_val': v}, 'geometry': s,'start_date':pd.to_datetime(start_frame_date) + timedelta(days=(time_shift*(1))),'end_date':pd.to_datetime(end_frame_date) + timedelta(days=(time_shift*(1)))}

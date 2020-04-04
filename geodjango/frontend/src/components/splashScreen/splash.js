@@ -1,20 +1,6 @@
 import React, { Component } from 'react';
 import axios from "../axios/axios";
-import {keyframes} from 'styled-components'
 
-const run = keyframes`from {
-    0 % {
-        left: -90px;
-        color: #eee;
-    }
-    50 % {
-        color: #666;
-    }
-    100 % {
-        left: 90px;
-        color: #eee;
-    }
-}`
 
 function LoadingMessage() {
     return (
@@ -23,13 +9,8 @@ function LoadingMessage() {
             height: '100 %',
             display: 'flex'
         }}>
-            Wait a moment while we load your app
-            <div className="loading-dot" style={{
-                'position': 'relative',
-                'animation': 'ease-in-out infinite alternate',
-                'animationName': `run`,
-                'animationDuration': '.2s',
-            }}>. . . .</div>
+            Wait a moment while we load your app 
+            <div className="loading-dot">. . . .</div>
         </div>
     );
 }

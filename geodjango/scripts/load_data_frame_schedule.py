@@ -189,9 +189,10 @@ def run():
 
 
 sched = BlockingScheduler()
-@sched.scheduled_job('interval', minutes=1)
+@sched.scheduled_job('interval', minutes=5)
 def timed_job():
-    print('This job is run every single minute.')
+    run()
+    print('This job is run every 10 minute.')
 
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=0)
 def scheduled_job():

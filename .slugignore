@@ -1,0 +1,7 @@
+/.git
+/node_modules
+*.zip
+*.dbf
+*.prj
+*.shp
+*.shx

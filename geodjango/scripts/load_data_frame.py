@@ -131,10 +131,19 @@ def run():
     y_test2 = normalized_matrices_test
 
     import tensorflow.keras as keras
+    from tensorflow.keras.utils import get_file
+
+    Model_Weight_URL = os.environ.get('Model_Weight_URL')
+    weights_path = get_file(
+            'TensorFlowModel_2020_train_save_my_weights.h5',
+            Model_Weight_URL)
+            
+
     with open(CSV_PATH + 'TensorFlowModel_2020_train_save_model_config.json') as json_file:
             json_config = json_file.read()
     model = keras.models.model_from_json(json_config)
-    model.load_weights(CSV_PATH + 'TensorFlowModel_2020_train_save_my_weights.h5')
+    model.load_weights(weights_path)
+    #model.load_weights(CSV_PATH + 'TensorFlowModel_2020_train_save_my_weights.h5')
 
     Last_time_frame = y_test2
     pred = model.predict(np.reshape(Last_time_frame,(Last_time_frame.shape[0],1,Last_time_frame.shape[1])))

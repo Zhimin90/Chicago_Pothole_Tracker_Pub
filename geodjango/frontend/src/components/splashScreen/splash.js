@@ -28,8 +28,8 @@ function withSplashScreen(WrappedComponent) {
         componentDidMount() {
             try {
                 axios
-                    .get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
-                    //.get("http://127.0.0.1:8000/api/geojson_density_map", {
+                    //.get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
+                    .get("http://127.0.0.1:8000/api/geojson_density_map", {
                         params: {
                             Bounds: { _sw: { lng: -87.98660192452012, lat: 41.616991663579824}
                                 , _ne: { lng: -87.469560248543, lat: 42.073955436739794}}

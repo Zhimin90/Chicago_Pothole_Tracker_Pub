@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import Splash from "./body"
+import withSplashScreen from '../splashScreen/splash';
+import Mapbox from "../mapbox/mapbox";
+
+const Splash = withSplashScreen(Mapbox)
 
 export class Header extends Component {
   render() {

@@ -66,12 +66,12 @@ def run():
         map_arr.append(geo_price_map_filtered)
 
     map_arr.reverse()
-
+    """
     last_30days_df = map_arr[-1]
 
     f = open(CSV_PATH +'last_30days_df.pkl', "wb")
     dill.dump(last_30days_df, file=f)
-    f.close()
+    f.close() """
 
     pothole_count = []
     for df in map_arr:

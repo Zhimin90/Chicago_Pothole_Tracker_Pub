@@ -67,6 +67,13 @@ def run():
         map_arr.append(geo_price_map_filtered)
 
     map_arr.reverse()
+
+    last_30days_df = map_arr[-1]
+
+    f = open(CSV_PATH +'last_30days_df.pkl', "wb")
+    dill.dump(last_30days_df, file=f)
+    f.close()
+
     pothole_count = []
     for df in map_arr:
         pothole_count.append(df.count())
@@ -138,7 +145,6 @@ def run():
     weights_path = get_file(
             'TensorFlowModel_2020_train_save_my_weights.h5',
             Model_Weight_URL)
-            
 
     with open(CSV_PATH + 'TensorFlowModel_2020_train_save_model_config.json') as json_file:
             json_config = json_file.read()

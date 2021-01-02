@@ -21,23 +21,52 @@ function withSplashScreen(WrappedComponent) {
             super(props);
             this.state = {
                 loading: true,
-                data: {}
+                data: {density: {}, points:{}}
             };
         }
 
         componentDidMount() {
             try {
                 axios
-                    .get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
+                    //.get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
                     //.get("http://127.0.0.1:8000/api/geojson_density_map", {
+                    .get("/geojson_density_map", {
                         params: {
                             Bounds: { _sw: { lng: -87.98660192452012, lat: 41.616991663579824}
                                 , _ne: { lng: -87.469560248543, lat: 42.073955436739794}}
                         }
                     })
                     .then(({ data }) => {
-                        this.setState({ data: data, loading: false });
+                        let newData = this.state.data;
+                        newData.density = data;
+                        this.setState({ data: newData, loading: false });
                     });
+
+            } catch (err) {
+                console.log(err);
+                this.setState({
+                    loading: false,
+                });
+            }
+        
+
+            try {
+            axios
+                //.get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
+                //.get("http://127.0.0.1:8000/api/geojson_density_map", {
+                .get("/geojson_points_map", {
+                    params: {
+                        Bounds: {
+                            _sw: { lng: -87.98660192452012, lat: 41.616991663579824 }
+                            , _ne: { lng: -87.469560248543, lat: 42.073955436739794 }
+                        }
+                    }
+                })
+                .then(({ data }) => {
+                    let newData = this.state.data;
+                    newData.points = data;
+                    this.setState({ data: newData, loading: false });
+                });
 
             } catch (err) {
                 console.log(err);

@@ -8,7 +8,9 @@ from datetime import datetime
 import ast
 import tensorflow as tf
 import geopandas as gpd
-#from tensorflow.keras.models import Sequential
+import dill
+import os
+
 
 # Create your views here.
 def get_density_map(request):
@@ -31,4 +33,22 @@ def get_density_map(request):
 
 def load_data_frame(request):
     print("loading DataFrame")
+
+def get_points(request):
+    print("getting raw points")
+    CSV_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/'
+    f_in = open(CSV_PATH +'last_30days_df.pkl', "rb")
+    df = dill.load(f_in)
+    f_in.close()
+    print(df)
+    #serialize date first
+    df['REQUEST_DATE'] = df['REQUEST_DATE'].dt.strftime(
+        '%Y-%m-%d')
+    df['COMPLETION_DATE'] = df['COMPLETION_DATE'].dt.strftime(
+        '%Y-%m-%d')
+        
+    gdf = gpd.GeoDataFrame(
+        df, geometry=gpd.points_from_xy(df.LONGITUDE, df.LATITUDE))
+    return(HttpResponse(gdf.to_json()))
+
 

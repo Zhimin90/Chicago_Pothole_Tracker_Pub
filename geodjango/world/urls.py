@@ -6,4 +6,5 @@ from . import views
 router = routers.DefaultRouter()
 router.register('api/world', T_PotholesViewSet, 'T_Potholes')
 urlpatterns = [router.urls[0],
-    path('api/geojson_density_map', views.get_density_map, name='geojson_densty_map')]
+    path('api/geojson_density_map', views.get_density_map, name='geojson_densty_map'),
+    path('api/geojson_points_map', views.get_points, name='geojson_points_map')]

@@ -54,8 +54,26 @@ class Mapbox extends React.Component {
 
       map.addSource("chicago_bound", {
         type: "geojson",
-        data: this.props.data
+        data: this.props.data.density
       });
+
+      map.addSource("chicago_potholes", {
+        type: "geojson",
+        data: this.props.data.points
+      });
+      // add circle layer here
+      map.addLayer({
+        id: 'pothole-location',
+        type: 'circle',
+        source: 'chicago_potholes',
+        paint: {
+          'circle-color': 'black',
+          'circle-radius': 4,
+          'circle-stroke-width': 1,
+          'circle-stroke-color': '#fff'
+        }
+      });
+
       map.addLayer({
         id: "maine",
         type: "fill",
@@ -79,7 +97,23 @@ class Mapbox extends React.Component {
             200,
             "rgb(178,24,43)"
           ],
-          "fill-opacity": 0.8
+          "fill-opacity": 0.6
+        }
+      });
+
+      map.addLayer({
+        'id': 'pothole-reported-time',
+        'type': 'symbol',
+        'source': 'chicago_potholes',
+        'layout': {
+          'text-field': ['get', 'REQUEST_DATE'],
+          'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+          'text-radial-offset': 0.5,
+          'text-justify': 'auto',
+          'text-size': 8
+        },
+        'paint': {
+          "text-color": "#000000"
         }
       });
  

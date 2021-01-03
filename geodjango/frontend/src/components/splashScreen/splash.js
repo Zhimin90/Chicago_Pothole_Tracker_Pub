@@ -83,7 +83,7 @@ function withSplashScreen(WrappedComponent) {
 
         render() {
             // while checking user session, show "loading" message
-            if (this.state.loading1 && this.state.loading2) return LoadingMessage();
+            if (this.state.loading1 || this.state.loading2) return LoadingMessage();
             // otherwise, show the desired route
             return <WrappedComponent data={this.state.data}/>;
         }

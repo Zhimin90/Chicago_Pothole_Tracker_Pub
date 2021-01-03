@@ -20,7 +20,8 @@ function withSplashScreen(WrappedComponent) {
         constructor(props) {
             super(props);
             this.state = {
-                loading: true,
+                loading1: true,
+                loading2: true,
                 data: {
                     density: {
                         "type": "FeatureCollection",
@@ -36,8 +37,6 @@ function withSplashScreen(WrappedComponent) {
         componentDidMount() {
             try {
                 axios
-                    //.get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
-                    //.get("http://127.0.0.1:8000/api/geojson_density_map", {
                     .get("/geojson_density_map", {
                         params: {
                             Bounds: { _sw: { lng: -87.98660192452012, lat: 41.616991663579824}
@@ -47,21 +46,19 @@ function withSplashScreen(WrappedComponent) {
                     .then(({ data }) => {
                         let newData = this.state.data;
                         newData.density = data;
-                        this.setState({ data: newData, loading: false });
+                        this.setState({ data: newData, loading1: false });
                     });
 
             } catch (err) {
                 console.log(err);
                 this.setState({
-                    loading: false,
+                    loading2: false,
                 });
             }
         
 
             try {
             axios
-                //.get("https://chicago-pothole-forecast.herokuapp.com/api/geojson_density_map", {
-                //.get("http://127.0.0.1:8000/api/geojson_density_map", {
                 .get("/geojson_points_map", {
                     params: {
                         Bounds: {
@@ -73,20 +70,20 @@ function withSplashScreen(WrappedComponent) {
                 .then(({ data }) => {
                     let newData = this.state.data;
                     newData.points = data;
-                    this.setState({ data: newData, loading: false });
+                    this.setState({ data: newData, loading2: false });
                 });
 
             } catch (err) {
                 console.log(err);
                 this.setState({
-                    loading: false,
+                    loading2: false,
                 });
             }
         }
 
         render() {
             // while checking user session, show "loading" message
-            if (this.state.loading) return LoadingMessage();
+            if (this.state.loading1 && this.state.loading2) return LoadingMessage();
             // otherwise, show the desired route
             return <WrappedComponent data={this.state.data}/>;
         }

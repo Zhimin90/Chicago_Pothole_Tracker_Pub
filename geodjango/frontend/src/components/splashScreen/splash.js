@@ -21,7 +21,15 @@ function withSplashScreen(WrappedComponent) {
             super(props);
             this.state = {
                 loading: true,
-                data: {density: {}, points:{}}
+                data: {
+                    density: {
+                        "type": "FeatureCollection",
+                        "features": []
+                    }, points: {
+                        "type": "FeatureCollection",
+                        "features": []
+                    }
+                }
             };
         }
 

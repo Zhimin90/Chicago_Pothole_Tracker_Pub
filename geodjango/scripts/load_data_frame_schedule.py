@@ -20,11 +20,13 @@ import dill
 
 CSV_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/'
 
+#print("got packages")
+
 def run():
     previous_30days_date = (pd.datetime.now()- timedelta(days=30)).strftime('%Y-%m-%d')
     client = Socrata("data.cityofchicago.org", None)
     results = client.get("wqdh-9gek",order="request_date DESC",where="request_date > \"" + str(previous_30days_date)+"\"", limit=100000)
-
+    #print("got results")
     # Convert to pandas DataFrame
     results_df = pd.DataFrame.from_records(results)
     test_df = results_df
@@ -205,10 +207,12 @@ def run():
 
 
 sched = BlockingScheduler()
+"""
 @sched.scheduled_job('interval', minutes=25)
 def timed_job():
     run()
     print('This job is run every 25 minute.')
+"""
 
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=0)
 def scheduled_job():
